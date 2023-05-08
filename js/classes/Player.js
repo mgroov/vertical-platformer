@@ -1,14 +1,14 @@
 class Player extends Sprite {
   constructor({
-    position,
-    collisionBlocks,
-    platformCollisionBlocks,
-    imageSrc,
-    frameRate,
-    scale = 0.5,
-    animations,
+    position, //x,y
+    collisionBlocks, //solid blocks
+    platformCollisionBlocks, // jump through blocks
+    imageSrc, //animation source
+    frameRate, //animation frame rate
+    scale = 0.5, //scaling factor
+    animations, // list of all animations
   }) {
-    super({ imageSrc, frameRate, scale })
+    super({ imageSrc, frameRate, scale }) //call sprite and pass the information
     this.position = position
     this.velocity = {
       x: 0,
@@ -19,7 +19,7 @@ class Player extends Sprite {
     this.platformCollisionBlocks = platformCollisionBlocks
     this.hitbox = {
       position: {
-        x: this.position.x,
+        x: this.position.x, //create hitbox for collision
         y: this.position.y,
       },
       width: 10,
@@ -31,7 +31,7 @@ class Player extends Sprite {
 
     for (let key in this.animations) {
       const image = new Image()
-      image.src = this.animations[key].imageSrc
+      image.src = this.animations[key].imageSrc //load all the images for animaations once
 
       this.animations[key].image = image
     }
@@ -39,13 +39,14 @@ class Player extends Sprite {
     this.camerabox = {
       position: {
         x: this.position.x,
-        y: this.position.y,
+        y: this.position.y, //create camerabox
       },
       width: 200,
       height: 80,
     }
   }
 
+  //helper function that switches animations and subsequent info
   switchSprite(key) {
     if (this.image === this.animations[key].image || !this.loaded) return
 
@@ -55,6 +56,7 @@ class Player extends Sprite {
     this.frameRate = this.animations[key].frameRate
   }
 
+  //update pos of camerabox
   updateCamerabox() {
     this.camerabox = {
       position: {
@@ -66,6 +68,7 @@ class Player extends Sprite {
     }
   }
 
+  //check for x axis collisions
   checkForHorizontalCanvasCollision() {
     if (
       this.hitbox.position.x + this.hitbox.width + this.velocity.x >= 576 ||
@@ -75,6 +78,7 @@ class Player extends Sprite {
     }
   }
 
+  //helper function that determines if we should move camera box
   shouldPanCameraToTheLeft({ canvas, camera }) {
     const cameraboxRightSide = this.camerabox.position.x + this.camerabox.width
     const scaledDownCanvasWidth = canvas.width / 4
@@ -89,6 +93,7 @@ class Player extends Sprite {
     }
   }
 
+  //helper function that determines if we should move camera box to the right
   shouldPanCameraToTheRight({ canvas, camera }) {
     if (this.camerabox.position.x <= 0) return
 
@@ -97,6 +102,7 @@ class Player extends Sprite {
     }
   }
 
+  //helper function that determines if we should move camera box down
   shouldPanCameraDown({ canvas, camera }) {
     if (this.camerabox.position.y + this.velocity.y <= 0) return
 
@@ -105,6 +111,7 @@ class Player extends Sprite {
     }
   }
 
+  //helper function that determines if we should move camera box up
   shouldPanCameraUp({ canvas, camera }) {
     if (
       this.camerabox.position.y + this.camerabox.height + this.velocity.y >=
@@ -122,6 +129,7 @@ class Player extends Sprite {
     }
   }
 
+  //calls all the updates at once from animation loop
   update() {
     this.updateFrames()
     this.updateHitbox()
@@ -147,16 +155,17 @@ class Player extends Sprite {
     //   this.hitbox.height
     // )
 
-    this.draw()
+    this.draw() //calls the sprite draw
 
-    this.position.x += this.velocity.x
+    this.position.x += this.velocity.x //updates x we rely on gravity call to update y
     this.updateHitbox()
-    this.checkForHorizontalCollisions()
+    this.checkForHorizontalCollisions() // we do this first because y collisions are almost always expected
     this.applyGravity()
     this.updateHitbox()
     this.checkForVerticalCollisions()
   }
 
+  //uodate x and y of hitbox
   updateHitbox() {
     this.hitbox = {
       position: {
@@ -168,9 +177,10 @@ class Player extends Sprite {
     }
   }
 
+  //helper function that checks horizontal collisions
   checkForHorizontalCollisions() {
     for (let i = 0; i < this.collisionBlocks.length; i++) {
-      const collisionBlock = this.collisionBlocks[i]
+      const collisionBlock = this.collisionBlocks[i] //loops and grabs collision blocks 1 by 1
 
       if (
         collision({
@@ -201,11 +211,13 @@ class Player extends Sprite {
     }
   }
 
+  //applies gravity and updates y pos
   applyGravity() {
     this.velocity.y += gravity
     this.position.y += this.velocity.y
   }
 
+  //helper function that checks y collisions
   checkForVerticalCollisions() {
     for (let i = 0; i < this.collisionBlocks.length; i++) {
       const collisionBlock = this.collisionBlocks[i]

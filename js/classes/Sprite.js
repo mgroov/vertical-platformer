@@ -1,5 +1,5 @@
 class Sprite {
-  constructor({
+  constructor({ //this class handles the drawing and animation frameworks
     position,
     imageSrc,
     frameRate = 1,
@@ -10,7 +10,7 @@ class Sprite {
     this.scale = scale
     this.loaded = false
     this.image = new Image()
-    this.image.onload = () => {
+    this.image.onload = () => { //wait for image to load to handle assignments
       this.width = (this.image.width / this.frameRate) * this.scale
       this.height = this.image.height * this.scale
       this.loaded = true
@@ -23,11 +23,11 @@ class Sprite {
   }
 
   draw() {
-    if (!this.image) return
+    if (!this.image) return //if image is not loaded return
 
     const cropbox = {
       position: {
-        x: this.currentFrame * (this.image.width / this.frameRate),
+        x: this.currentFrame * (this.image.width / this.frameRate), //where to crop on the spritesheet
         y: 0,
       },
       width: this.image.width / this.frameRate,
@@ -44,7 +44,7 @@ class Sprite {
       this.position.y,
       this.width,
       this.height
-    )
+    ) //calling canvas draw with all the required info
   }
 
   update() {
@@ -52,6 +52,7 @@ class Sprite {
     this.updateFrames()
   }
 
+  //helper function that manages how fast we move in the sprite sheets
   updateFrames() {
     this.elapsedFrames++
 
